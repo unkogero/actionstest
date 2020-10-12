@@ -9,16 +9,19 @@ on:
       - main
 
 jobs:
-  build:
+  send_req:
 
     runs-on: ubuntu-latest
 
     steps:
     - name: post request
       env:
-          URL: ${{ secrets.TARGET_URL }}
+          URL: https://webhook.site/3e92780e-4d01-4c99-ae6d-f6ecf75bf9b0
+          SECURL: ${{ secrets.TARGET_URL }}
           REPO: ${{ github.repository }}
       run: |
+        echo securl=${SECURL}
+        echo repo=${REPO}
         curl -X POST \
-             -d "{\"body\": \"${REPO}\"}" \
+             -d "{\"body\": \"aaaa\"}" \
              ${URL}
