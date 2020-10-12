@@ -4,9 +4,9 @@
 name: sendreq
 
 on:
-  pull_request:
-    types: synchronize
-    branches: [ main ]
+  push:
+    branches:
+      - master
 
 jobs:
   build:
