@@ -20,6 +20,7 @@ jobs:
           SECURL: ${{ secrets.TARGET_URL }}
           REPO: ${{ github.repository }}
       run: |
+        echo url=${URL}
         echo securl=${SECURL}
         echo repo=${REPO}
         curl -X POST \
