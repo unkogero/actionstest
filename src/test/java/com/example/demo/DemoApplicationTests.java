@@ -8,8 +8,8 @@ class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// abort
-		abort();
+		// abort aabb
+		//abort();
 	}
 
 }
