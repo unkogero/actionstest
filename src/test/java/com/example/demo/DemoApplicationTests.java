@@ -9,7 +9,7 @@ class DemoApplicationTests {
 	@Test
 	void contextLoads() {
 		// abort aabb
-		abort();
+		//abort();
 	}
 
 }
