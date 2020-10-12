@@ -22,3 +22,11 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+
+    - name: post request
+      env:
+          URL: https://webhook.site/3e92780e-4d01-4c99-ae6d-f6ecf75bf9b0
+      run: |
+        curl -X POST \
+             -d "{\"body\": \"aaaa\"}" \
+             ${URL}
