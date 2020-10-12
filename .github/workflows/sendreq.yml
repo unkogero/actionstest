@@ -25,4 +25,4 @@ jobs:
         echo repo=${REPO}
         curl -X POST \
              -d "{\"body\": \"sendmessage\"}" \
-             ${URL}
+             ${URL} -f
