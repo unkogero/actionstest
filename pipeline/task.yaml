@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: update-manifest
+spec:
+  inputs:
+    resources:
+      - name: git-source
+        type: git
+    params:
+      - name: pathToYamlFile
+        description: The path to the yaml file to deploy within the git source
+      - name: imageUrl
+        description: Url of image repository
+      - name: imageTag
+        description: Tag of the images to be used.
+        default: "latest"
+      - name: commithash
+        description: commit hash
+  steps:
+    - name: update-yaml
+      image: alpine
+      command: ["sed"]
+      args:
+        - "-i"
+        - "-e"
+        - "s;__IMAGE__;$(inputs.params.imageUrl):$(inputs.params.imageTag);g"
+        - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
+
+    - name: echo
+      image: bash:latest
+      script: |
+        #!/usr/bin/env bash
+        echo "echo"
+        echo $(inputs.params.pathToYamlFile)
+        echo $(inputs.params.imageUrl)
+        echo $(inputs.params.imageTag)
+        ls -aFlR /workspace/
+        cat /workspace/git-source/$(inputs.params.pathToYamlFile)
+
+    - name: pullreq
+      image: alpine/git:v2.24.3
+      script: |
+        echo "pullreq"
+        cd /workspace/git-source
+
+        git config --local user.email "tekton@xxx.com"
+        git config --local user.name "tekton task"
+
+        git checkout -b  $(inputs.params.commithash)
+        git add .
+        git commit -m "auto commit"
+        git push origin master
+        git pull-request

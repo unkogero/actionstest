@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: build-update
+spec:
+  params:
+    - name: pathToYamlFile
+      value: "manifest/k8s.yaml"
+    - name: commithash
+      value: "abcdefg"
+    - name: imageUrl
+      value: <REGISTRY>/<NAMESPACE>/pipeline
+    - name: imageTag
+      value: "1.0"
+  pipelineRef:
+    name: build-update
+  resources:
+    - name: git-apprepo
+      resourceRef:
+        name: app-git
+    - name: git-infrarepo
+      resourceRef:
+        name: manifest-git
+    - name: image
+      resourceRef:
+        name: app-image
+  serviceAccountName: pipeline
+  timeout: 1h0m0s

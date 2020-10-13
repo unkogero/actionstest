@@ -19,10 +19,11 @@ jobs:
           URL: https://webhook.site/3e92780e-4d01-4c99-ae6d-f6ecf75bf9b0
           SECURL: ${{ secrets.TARGET_URL }}
           REPO: ${{ github.repository }}
+          HASH: ${{ github.sha }}
       run: |
         echo url=${URL}
         echo securl=${SECURL}
         echo repo=${REPO}
         curl -X POST \
-             -d "{\"body\": \"sendmessage\"}" \
+             -d "{\"body\": \"sendmessage\", \"hash\":${HASH}}" \
              ${URL} -f
