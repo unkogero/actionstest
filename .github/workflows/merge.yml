@@ -33,6 +33,6 @@ jobs:
           git add .
           git commit -m "auto commit"
 
-          git push https://x-access-token:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git ${HASH}
+          git push https://x-access-token:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
