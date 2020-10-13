@@ -23,7 +23,7 @@ jobs:
       - name: commit manifests and push
         run: |
           echo ${REF}
-          git clone https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
+          git clone https://${TOKEN}:x-oauth-basic@github.com/unkogero/pipelinetest.git
 
           sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
 
