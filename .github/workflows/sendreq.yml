@@ -21,6 +21,7 @@ jobs:
           REPO: ${{ github.repository }}
           HASH: ${{ github.sha }}
           REF: ${{ github.ref }}
+          ACTOR: ${{ github.actor }}
       run: |
         echo url=${URL}
         echo securl=${SECURL}
@@ -29,6 +30,7 @@ jobs:
              -d "{\"body\": \"sendmessage\",
               \"hash\":${HASH},
               \"repo\":${REPO},
-              \"ref\":${REF}
+              \"ref\":${REF},
+              \"actor\":${ACTOR}
               }" \
              ${URL} -f
