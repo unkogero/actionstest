@@ -15,8 +15,9 @@ jobs:
       REPO: https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  ref: ${{github.event.pull_request.head.ref}}
+        with:
+          repository: ${REPO}
+          ref: master
       - run: date >> README.md
       - name: commit manifests and push
         run: |
