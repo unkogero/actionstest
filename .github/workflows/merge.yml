@@ -11,26 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REF: ${{github.event.pull_request.head.ref}}
-      REPO: https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+      HASH: ${{ github.sha }}
+      REPO: https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{github.event.pull_request.head.ref}}
+        #with:
+        #  ref: ${{github.event.pull_request.head.ref}}
       - run: date >> README.md
       - name: commit manifests and push
         run: |
           echo ${REF}
-          git config --global user.email "workflow@example.com"
-          git config --global user.name "workflow user"
-          git add .
-          git commit -m 'modify README' && git push ${REPO} HEAD:${{github.event.pull_request.head.ref}} || true
-      - name: merge pull request
-        uses: actions/github-script@0.4.0
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            })
+          sed -i -e -s;__IMAGE__;imageurl:imagetag:${};g manifests/k8s.yaml
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
