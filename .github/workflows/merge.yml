@@ -13,7 +13,7 @@ jobs:
       REF: ${{github.event.pull_request.head.ref}}
       HASH: ${{ github.sha }}
       TOKEN: ${{secrets.TKN}}
-      REPO: https://x-access-token:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
+      REPO: https://x-oauth-token:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
         with:
@@ -23,7 +23,7 @@ jobs:
       - name: commit manifests and push
         run: |
           echo ${REF}
-          git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
+          git remote set-url origin https://x-oauth-token:${TOKEN}@github.com/unkogero/pipelinetest.git
 
           sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
 
@@ -34,6 +34,6 @@ jobs:
           git add .
           git commit -m "auto commit"
 
-          git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
+          git push https://x-oauth-token:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
