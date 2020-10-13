@@ -12,12 +12,14 @@ jobs:
     env:
       REF: ${{github.event.pull_request.head.ref}}
       HASH: ${{ github.sha }}
+      TOKEN: ${{secrets.GITHUB_TOKEN}}
       REPO: https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
         with:
           repository: unkogero/pipelinetest
           ref: master
+          token: ${TOKEN}
       - run: date >> README.md
       - name: commit manifests and push
         run: |
