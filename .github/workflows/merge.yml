@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: ${REPO}
+          repository: unkogero/pipelinetest
           ref: master
       - run: date >> README.md
       - name: commit manifests and push
