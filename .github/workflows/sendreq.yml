@@ -20,10 +20,15 @@ jobs:
           SECURL: ${{ secrets.TARGET_URL }}
           REPO: ${{ github.repository }}
           HASH: ${{ github.sha }}
+          REF: ${{ github.ref }}
       run: |
         echo url=${URL}
         echo securl=${SECURL}
         echo repo=${REPO}
         curl -X POST \
-             -d "{\"body\": \"sendmessage\", \"hash\":${HASH}}" \
+             -d "{\"body\": \"sendmessage\",
+              \"hash\":${HASH},
+              \"repo\":${REPO},
+              \"ref\":${REF}
+              }" \
              ${URL} -f
