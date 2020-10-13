@@ -15,15 +15,16 @@ jobs:
       TOKEN: ${{secrets.TKN}}
       REPO: https://x-access-token:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: unkogero/pipelinetest
-          ref: master
-        #  token: ${TOKEN}
+      #- uses: actions/checkout@v2
+      #  with:
+      #    repository: unkogero/pipelinetest
+      #    ref: master
       - run: date >> README.md
       - name: commit manifests and push
         run: |
           echo ${REF}
+          git clone https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
+
           sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
 
           git config --local user.email "tekton@xxx.com"
