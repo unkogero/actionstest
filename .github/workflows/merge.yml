@@ -29,7 +29,7 @@ jobs:
           git config --local user.email "tekton@xxx.com"
           git config --local user.name "tekton task"
 
-          git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+          git remote set-url origin "git@github.com:unkogero/pipelinetest.github.io.git"
 
           git checkout -b  ${HASH}
 
@@ -44,7 +44,7 @@ jobs:
           git push origin ${HASH}
 
           #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
-
+          #git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
           #git checkout -b  ${HASH}
           #git add .
           #git commit -m "auto commit"
