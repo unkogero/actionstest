@@ -21,7 +21,7 @@ spec:
       args:
         - "-i"
         - "-e"
-        - "s;__IMAGE__;$(inputs.resources.image):$(inputs.params.commithash);g"
+        - "s;__IMAGE__;$(inputs.resources.image.url):$(inputs.params.commithash);g"
         - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
 
     - name: echo
