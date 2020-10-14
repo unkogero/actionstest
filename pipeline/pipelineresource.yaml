@@ -29,5 +29,5 @@ metadata:
 spec:
   params:
     - name: url
-      value: image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/ui:latest
+      value: image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/app
   type: image

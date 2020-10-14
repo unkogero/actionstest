@@ -8,10 +8,6 @@ spec:
       value: "manifest/k8s.yaml"
     - name: commithash
       value: "abcdefg"
-    - name: imageUrl
-      value: <REGISTRY>/<NAMESPACE>/pipeline
-    - name: imageTag
-      value: "1.0"
   pipelineRef:
     name: build-update
   resources:

@@ -2,6 +2,8 @@ name: merge
 
 on:
   pull_request:
+    branches:
+      - feat1
     types:
       - opened
       - synchronize
@@ -11,26 +13,47 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REF: ${{github.event.pull_request.head.ref}}
-      REPO: https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+      HASH: ${{ github.sha }}
+      TOKEN: ${{secrets.TKN}}
+      PIPELINE_KEY: ${{secrets.PIPELINE_KEY}}
+      REPO: https://unkogero:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{github.event.pull_request.head.ref}}
+          repository: unkogero/pipelinetest
+          ref: master
       - run: date >> README.md
-      - name: commit manifests and push
+      - name: commit manifests
         run: |
-          echo ${REF}
-          git config --global user.email "workflow@example.com"
-          git config --global user.name "workflow user"
+          echo "$PIPELINE_KEY" > ~/pipeline.pem
+          chmod 600 ~/pipeline.pem
+
+          git config --global user.email "github@xxx.com"
+          git config --global user.name "github task"
+
+          git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+
+          ls -laFR
+
+          git checkout -b ${HASH}
+
+          sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
+
           git add .
-          git commit -m 'modify README' && git push ${REPO} HEAD:${{github.event.pull_request.head.ref}} || true
-      - name: merge pull request
-        uses: actions/github-script@0.4.0
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            })
+          git commit -m "auto commit"
+
+      - name: push
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
+        run: |
+          git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
+
+          #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
+          #git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+          #git checkout -b  ${HASH}
+          #git add .
+          #git commit -m "auto commit"
+
+          #git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
