@@ -16,11 +16,11 @@ jobs:
       PIPELINE_KEY: ${{secrets.PIPELINE_KEY}}
       REPO: https://unkogero:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
-      #- uses: actions/checkout@v2
-      #  with:
-      #    repository: unkogero/pipelinetest
-      #    ref: master
-      #- run: date >> README.md
+      - uses: actions/checkout@v2
+        with:
+          repository: unkogero/pipelinetest
+          ref: master
+      - run: date >> README.md
       - name: commit manifests
         run: |
           echo ${PIPELINE_KEY} > ~/pipeline.pem
@@ -32,7 +32,6 @@ jobs:
           git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
 
           ls -laFR
-          cd pipelinetest
 
           git checkout -b ${HASH}
 
