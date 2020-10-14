@@ -42,8 +42,7 @@ jobs:
 
       - name: push
         run: |
-          ssh -i ~/deploy_key.pem -o StrictHostKeyChecking=no -F /dev/null
-          cd pipelinetest
+          ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
           git push origin ${HASH}
 
           #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
