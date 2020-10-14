@@ -31,7 +31,10 @@ jobs:
 
           git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
 
-          git checkout -b  ${HASH}
+          git checkout -b ${HASH}
+
+          ls -laFR
+          cd pipelinetest
 
           sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
 
@@ -41,6 +44,7 @@ jobs:
       - name: push
         run: |
           ssh -i ~/deploy_key.pem -o StrictHostKeyChecking=no -F /dev/null
+          cd pipelinetest
           git push origin ${HASH}
 
           #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
