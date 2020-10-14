@@ -36,15 +36,15 @@ spec:
       value: "false"
 
   - name: update
+    runAfter:
+      - build-image
     taskRef:
       name: update-manifest
-      runAfter:
-        - build-image
-      params:
-      - name: pathToYamlFile
-        value:  "$(params.pathToYamlFile)"
-      - name: commithash
-        value: "$(params.commithash)"
+    params:
+    - name: pathToYamlFile
+      value:  "$(params.pathToYamlFile)"
+    - name: commithash
+      value: "$(params.commithash)"
     resources:
       inputs:
         - name: git-source

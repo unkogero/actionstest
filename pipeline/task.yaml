@@ -41,9 +41,12 @@ spec:
 
         git config --local user.email "tekton@xxx.com"
         git config --local user.name "tekton task"
+        git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
 
         git checkout -b $(inputs.params.commithash)
         git add .
         git commit -m "auto commit"
+        
         git push origin $(inputs.params.commithash)
+        
 
