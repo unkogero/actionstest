@@ -31,10 +31,10 @@ jobs:
 
           git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
 
-          git checkout -b ${HASH}
-
           ls -laFR
           cd pipelinetest
+
+          git checkout -b ${HASH}
 
           sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
 
