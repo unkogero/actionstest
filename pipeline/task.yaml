@@ -21,7 +21,7 @@ spec:
       args:
         - "-i"
         - "-e"
-        - "s;__IMAGE__;$(inputs.resources.image.url):$(inputs.params.commithash);g"
+        - "s;__IMAGE__;$(inputs.resources.image.url);g"
         - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
 
     - name: echo
@@ -41,12 +41,12 @@ spec:
 
         git config --local user.email "tekton@xxx.com"
         git config --local user.name "tekton task"
-        git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+        #git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
 
-        git checkout -b $(inputs.params.commithash)
+        git checkout -b tekton
         git add .
         git commit -m "auto commit"
         
-        git push origin $(inputs.params.commithash)
+        git push origin tekton
         
 
