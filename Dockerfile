@@ -6,5 +6,8 @@ COPY src ./src
 RUN mvn -e -B package
 
 FROM openjdk:8-jre-alpine
+
 COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar /
 CMD ["java", "-jar", "/demo-0.0.1-SNAPSHOT.jar"]
+
+
