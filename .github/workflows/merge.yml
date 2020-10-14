@@ -13,6 +13,7 @@ jobs:
       HASH: ${{ github.sha }}
       TOKEN: ${{secrets.TKN}}
       PIPELINE_KEY: ${{secrets.PIPELINE_KEY}}
+      KNWONHOST_KEY: ${{secrets.KNWONHOST}}
       REPO: https://unkogero:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
@@ -24,6 +25,7 @@ jobs:
         run: |
           echo ${PIPELINE_KEY} > ~/pipeline.pem
           chmod 600 ~/pipeline.pem
+          echo ${KNWONHOST_KEY} > ~/.ssh/khown_hosts
 
           git config --global user.email "github@xxx.com"
           git config --global user.name "github task"
