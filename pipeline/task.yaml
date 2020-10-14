@@ -7,14 +7,11 @@ spec:
     resources:
       - name: git-source
         type: git
+      - name: image
+        type: image
     params:
       - name: pathToYamlFile
         description: The path to the yaml file to deploy within the git source
-      - name: imageUrl
-        description: Url of image repository
-      - name: imageTag
-        description: Tag of the images to be used.
-        default: "latest"
       - name: commithash
         description: commit hash
   steps:
@@ -24,7 +21,7 @@ spec:
       args:
         - "-i"
         - "-e"
-        - "s;__IMAGE__;$(inputs.params.imageUrl):$(inputs.params.imageTag);g"
+        - "s;__IMAGE__;$(inputs.resources.image):$(inputs.params.commithash);g"
         - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
 
     - name: echo
@@ -33,22 +30,20 @@ spec:
         #!/usr/bin/env bash
         echo "echo"
         echo $(inputs.params.pathToYamlFile)
-        echo $(inputs.params.imageUrl)
-        echo $(inputs.params.imageTag)
         ls -aFlR /workspace/
         cat /workspace/git-source/$(inputs.params.pathToYamlFile)
 
-    - name: pullreq
+    - name: push
       image: alpine/git:v2.24.3
       script: |
-        echo "pullreq"
+        echo "push"
         cd /workspace/git-source
 
         git config --local user.email "tekton@xxx.com"
         git config --local user.name "tekton task"
 
-        git checkout -b  $(inputs.params.commithash)
+        git checkout -b $(inputs.params.commithash)
         git add .
         git commit -m "auto commit"
-        git push origin master
-        git pull-request
+        git push origin $(inputs.params.commithash)
+
