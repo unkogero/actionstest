@@ -38,7 +38,9 @@ spec:
   - name: update
     taskRef:
       name: update-manifest
-    params:
+      runAfter:
+        - build-image
+      params:
       - name: pathToYamlFile
         value:  "$(params.pathToYamlFile)"
       - name: commithash
