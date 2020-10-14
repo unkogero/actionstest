@@ -18,30 +18,8 @@ spec:
       description: The path to the yaml file to deploy within the git source
     - name: commithash
       description: commit hash
-    - name: imageUrl
-      description: Url of image repository
-    - name: imageTag
-      description: Tag to apply to the built image
+
   tasks:
-
-  - name: update
-    taskRef:
-      name: update-manifest
-    params:
-      - name: pathToYamlFile
-        value:  "$(params.pathToYamlFile)"
-      - name: commithash
-        value: "$(params.commithash)"
-      - name: imageUrl
-        value: "$(params.imageUrl)"
-      - name: imageTag
-        value: "$(params.imageTag)"
-    resources:
-      inputs:
-        - name: git-source
-          resource: git-infrarepo
-
-
   - name: build-image
     taskRef:
       name: buildah
@@ -56,3 +34,19 @@ spec:
     params:
     - name: TLSVERIFY
       value: "false"
+
+  - name: update
+    taskRef:
+      name: update-manifest
+    params:
+      - name: pathToYamlFile
+        value:  "$(params.pathToYamlFile)"
+      - name: commithash
+        value: "$(params.commithash)"
+    resources:
+      inputs:
+        - name: git-source
+          resource: git-infrarepo
+        - name: image
+          resource: image
+
