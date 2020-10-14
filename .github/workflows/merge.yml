@@ -2,6 +2,8 @@ name: merge
 
 on:
   pull_request:
+    branches:
+      - feat1
     types:
       - opened
       - synchronize
