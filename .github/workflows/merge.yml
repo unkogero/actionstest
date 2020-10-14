@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - feat1
-    types:
-      - opened
-      - synchronize
 
 jobs:
   merge:
