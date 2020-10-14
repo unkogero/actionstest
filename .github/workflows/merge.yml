@@ -41,8 +41,9 @@ jobs:
           git commit -m "auto commit"
 
       - name: push
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
         run: |
-          ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
           git push origin ${HASH}
 
           #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
