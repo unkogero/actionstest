@@ -13,27 +13,42 @@ jobs:
       REF: ${{github.event.pull_request.head.ref}}
       HASH: ${{ github.sha }}
       TOKEN: ${{secrets.TKN}}
+      PIPELINE_KEY: ${{secrets.PIPELINE_KEY}}
       REPO: https://unkogero:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: unkogero/pipelinetest
-          ref: master
-      - run: date >> README.md
-      - name: commit manifests and push
+      #- uses: actions/checkout@v2
+      #  with:
+      #    repository: unkogero/pipelinetest
+      #    ref: master
+      #- run: date >> README.md
+      - name: commit manifests
         run: |
-          echo ${REF}
-          git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
-
-          sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
+          echo ${PIPELINE_KEY} > ~/pipeline.pem
+          chmod 600 ~/pipeline.pem
 
           git config --local user.email "tekton@xxx.com"
           git config --local user.name "tekton task"
 
+          git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+
           git checkout -b  ${HASH}
+
+          sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
+
           git add .
           git commit -m "auto commit"
 
-          git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
+      - name: push
+        run: |
+          ssh -i ~/deploy_key.pem -o StrictHostKeyChecking=no -F /dev/null
+          git push origin ${HASH}
+
+          #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
+
+          #git checkout -b  ${HASH}
+          #git add .
+          #git commit -m "auto commit"
+
+          #git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
