@@ -44,7 +44,6 @@ jobs:
         env:
           GIT_SSH_COMMAND: ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
         run: |
-          chmod 666 ~/.ssh/known_hosts
           git push origin ${HASH}
 
           #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
