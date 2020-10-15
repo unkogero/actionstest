@@ -6,7 +6,7 @@ name: sendreq
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   send_req:
