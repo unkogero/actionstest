@@ -23,9 +23,10 @@ jobs:
       - run: date >> README.md
       - name: commit manifests
         run: |
-          echo ${PIPELINE_KEY} > ~/pipeline.pem
-          chmod 600 ~/pipeline.pem
           mkdir -p ~/.ssh/
+          echo ${PIPELINE_KEY} | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
           echo ${KNWONHOST_KEY} > ~/.ssh/khown_hosts
 
           git config --global user.email "github@xxx.com"
@@ -43,8 +44,8 @@ jobs:
           git commit -m "auto commit"
 
       - name: push
-        env:
-          GIT_SSH_COMMAND: ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
+        #env:
+        #  GIT_SSH_COMMAND: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null
         run: |
           git push origin tekton
           #git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
