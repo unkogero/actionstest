@@ -32,7 +32,7 @@ jobs:
           git config --global user.email "github@xxx.com"
           git config --global user.name "github task"
 
-          git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+          git config remote.origin.url "git@github.com:unkogero/pipelinetest.git"
 
           ls -laFR
 
