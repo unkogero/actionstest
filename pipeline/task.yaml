@@ -15,23 +15,22 @@ spec:
       - name: commithash
         description: commit hash
   steps:
-    - name: update-yaml
-      image: alpine
-      command: ["sed"]
-      args:
-        - "-i"
-        - "-e"
-        - "s;__IMAGE__;$(inputs.resources.image.url);g"
-        - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
+    #- name: update-yaml
+    #  image: alpine
+    #  command: ["sed"]
+    #  args:
+    #    - "-i"
+    #    - "-e"
+    #    - "s;__IMAGE__;$(inputs.resources.image.url);g"
+    #    - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
 
     - name: echo
       image: bash:latest
       script: |
-        #!/usr/bin/env bash
-        echo "echo"
-        echo $(inputs.params.pathToYamlFile)
-        ls -aFlR /workspace/
-        cat /workspace/git-source/$(inputs.params.pathToYamlFile)
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+
+        cd testapp/overlays/prd
+        kustomize edit set image image-name=$(inputs.resources.image.url)
 
     - name: push
       image: alpine/git:v2.24.3
@@ -46,7 +45,5 @@ spec:
         git checkout -b tekton
         git add .
         git commit -m "auto commit"
-        
-        git push origin tekton
-        
 
+        git push origin tekton

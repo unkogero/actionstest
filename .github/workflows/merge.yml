@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - feat1
-    types:
-      - opened
-      - synchronize
 
 jobs:
   merge:
@@ -16,6 +13,7 @@ jobs:
       HASH: ${{ github.sha }}
       TOKEN: ${{secrets.TKN}}
       PIPELINE_KEY: ${{secrets.PIPELINE_KEY}}
+      KNWONHOST_KEY: ${{secrets.KNWONHOST}}
       REPO: https://unkogero:${{secrets.TKN}}@github.com/unkogero/pipelinetest.git
     steps:
       - uses: actions/checkout@v2
@@ -25,17 +23,20 @@ jobs:
       - run: date >> README.md
       - name: commit manifests
         run: |
-          echo "$PIPELINE_KEY" > ~/pipeline.pem
-          chmod 600 ~/pipeline.pem
+          mkdir -p ~/.ssh/
+          echo ${PIPELINE_KEY} | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          echo ${KNWONHOST_KEY} > ~/.ssh/khown_hosts
 
           git config --global user.email "github@xxx.com"
           git config --global user.name "github task"
 
-          git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
+          git config remote.origin.url "git@github.com:unkogero/pipelinetest.git"
 
           ls -laFR
 
-          git checkout -b ${HASH}
+          git checkout -b tekton
 
           sed -ie "s/__IMAGE__/imageurl:imagetag:${HASH}/g" manifest/k8s.yaml
 
@@ -43,10 +44,11 @@ jobs:
           git commit -m "auto commit"
 
       - name: push
-        env:
-          GIT_SSH_COMMAND: ssh -i ~/pipeline.pem -o StrictHostKeyChecking=no -F /dev/null
+        #env:
+        #  GIT_SSH_COMMAND: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null
         run: |
-          git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
+          git push origin tekton
+          #git push https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git ${HASH}
 
           #git remote set-url origin https://unkogero:${TOKEN}@github.com/unkogero/pipelinetest.git
           #git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
