@@ -2,48 +2,39 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: update-manifest
+
 spec:
-  inputs:
-    resources:
+  params:
+    - description: The path to the yaml file to deploy within the git source
+      name: pathToYamlFile
+      type: string
+    - description: commit hash
+      name: commithash
+      type: string
+  resources:
+    inputs:
       - name: git-source
         type: git
       - name: image
         type: image
-    params:
-      - name: pathToYamlFile
-        description: The path to the yaml file to deploy within the git source
-      - name: commithash
-        description: commit hash
   steps:
-    #- name: update-yaml
-    #  image: alpine
-    #  command: ["sed"]
-    #  args:
-    #    - "-i"
-    #    - "-e"
-    #    - "s;__IMAGE__;$(inputs.resources.image.url);g"
-    #    - "/workspace/git-source/$(inputs.params.pathToYamlFile)"
-
-    - name: echo
-      image: bash:latest
+    - image: 'byrnedo/alpine-curl'
+      name: request
+      resources: {}
       script: |
-        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
-
-        cd testapp/overlays/prd
-        kustomize edit set image image-name=$(inputs.resources.image.url)
-
-    - name: push
-      image: alpine/git:v2.24.3
-      script: |
-        echo "push"
-        cd /workspace/git-source
-
-        git config --local user.email "tekton@xxx.com"
-        git config --local user.name "tekton task"
-        #git config remote.origin.url "git@github.com:unkogero/pipelinetest.github.io.git"
-
-        git checkout -b tekton
-        git add .
-        git commit -m "auto commit"
-
-        git push origin tekton
+        echo $GIT_TOKEN
+        curl -XPOST \
+        -H "Authorization: token "${GIT_TOKEN} \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/unkogero/pipelinetest/actions/workflows/merge.yml/dispatches \
+        -d '{"ref":"master","inputs": {"imagename":"'$(inputs.resources.image.url)'"}}'
+      env:
+      - name: GIT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: git-secret
+            key: GIT_TOKEN
+  volumes:
+  - name: git-secret
+    secret:
+      secretName: git-secret
