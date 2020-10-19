@@ -9,3 +9,30 @@ spec:
     - name: app
     template:
       name: app
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: github-listener-interceptor
+spec:
+  triggers:
+    - name: github-listener
+      interceptors:
+        - github:
+            secretRef:
+              secretName: git-secret
+              secretKey: apisecret
+            eventTypes:
+              - pull
+        - cel:
+            filter: "body.ref in ['refs/heads/master']"
+      bindings:
+        - ref: app
+      template:
+        ref: app
+  resources:
+    kubernetesResource:
+      spec:
+        template:
+          spec:
+            serviceAccountName: pipeline
