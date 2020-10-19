@@ -15,6 +15,7 @@ kind: EventListener
 metadata:
   name: github-listener-interceptor
 spec:
+  serviceAccountName: pipeline
   triggers:
     - name: github-listener
       interceptors:
@@ -27,12 +28,6 @@ spec:
         - cel:
             filter: "body.ref in ['refs/heads/master']"
       bindings:
-        - ref: app
+        - name: app
       template:
-        ref: app
-  resources:
-    kubernetesResource:
-      spec:
-        template:
-          spec:
-            serviceAccountName: pipeline
+        name: app
