@@ -1,0 +1,84 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: update-manifest
+
+spec:
+  params:
+    - description: The path to the yaml file to deploy within the git source
+      name: pathToYamlFile
+      type: string
+    - description: commit hash
+      name: commithash
+      type: string
+  resources:
+    inputs:
+      - name: git-source
+        type: git
+      - name: image
+        type: image
+  steps:
+    - image: 'byrnedo/alpine-curl'
+      name: request
+      resources: {}
+      script: |
+        curl -XPOST \
+        -H "Authorization: token ${GIT_TOKEN}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/unkogero/pipelinetest/actions/workflows/merge.yml/dispatches \
+        -d '{"ref":"master","inputs": {"imagename":"bbb/ccc:ddd"}}'
+      volumeMounts:
+      - name: git-secret
+        mountPath: /secret
+      env:
+      - name: GIT_TOKEN
+        value: /secret/GIT_TOKEN
+
+    - image: 'alpine'
+      name: echo
+
+      script: |
+
+        ls -lFR
+        bash /workspace/kustomize_install.sh
+        cd /workspace/git-source
+        cd testapp/overlays/prd
+        kustomize edit set image image-name=$(inputs.resources.image.url)
+
+    - image: 'alpine/git:v2.24.3'
+      name: push
+      resources: {}
+      script: |
+        echo "push"
+        cd /workspace/git-source
+
+        git config --local user.email "tekton@xxx.com"
+        git config --local user.name "tekton task"
+
+        git checkout -b tekton
+        git add .
+        git commit -m "auto commit"
+
+        git push origin tekton
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: get-secret
+
+spec:
+  params:
+    - name: git-secret
+      type: string
+  steps:
+    - image: 'alpine'
+      name: get-token
+      resources: {}
+      script: |
+        ${params.git-secret} = ${GIT_TOKEN}
+      volumeMounts:
+      - name: git-secret
+        mountPath: /secret
+      env:
+      - name: GIT_TOKEN
+        value: /secret/GIT_TOKEN

@@ -1,0 +1,67 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-update
+spec:
+  resources:
+    - name: git-apprepo
+      type: git
+    - name: git-infrarepo
+      type: git
+    - name: image
+      type: image
+  params:
+    - name: deployment-name
+      type: string
+      description: name of the deployment to be patched
+    - name: pathToYamlFile
+      description: The path to the yaml file to deploy within the git source
+    - name: commithash
+      description: commit hash
+
+  tasks:
+  - name: build-image
+    taskRef:
+      name: buildah
+      kind: ClusterTask
+    resources:
+      inputs:
+      - name: source
+        resource: git-apprepo
+      outputs:
+      - name: image
+        resource: image
+    params:
+    - name: TLSVERIFY
+      value: "false"
+
+  - name: curl
+    runAfter:
+      - build-image
+    params:
+    - name: url
+      value: "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
+    - name: options
+      value:
+       - "-s"
+       - " -o /workspace/install_kustomize.sh"
+    taskRef:
+      name: curl
+
+  - name: update
+    runAfter:
+      - curl
+    taskRef:
+      name: update-manifest
+    params:
+    - name: pathToYamlFile
+      value:  "$(params.pathToYamlFile)"
+    - name: commithash
+      value: "$(params.commithash)"
+    resources:
+      inputs:
+        - name: git-source
+          resource: git-infrarepo
+        - name: image
+          resource: image
+

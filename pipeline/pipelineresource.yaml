@@ -8,8 +8,7 @@ spec:
     - name: revision
       value: master
     - name: url
-      #value: https://github.com/unkogero/pipelinetest
-      value: git@github.com:unkogero/pipelinetest.git
+      value: https://github.com/unkogero/pipelinetest
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource

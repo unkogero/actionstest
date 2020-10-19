@@ -1,0 +1,1 @@
+oc expose svc el-app
