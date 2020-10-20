@@ -36,14 +36,13 @@ spec:
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: github-listener-interceptor
+  name: app
 spec:
   triggers:
     - name: github-listener
       interceptors:
       - cel:
-        filter: >-
-          body.ref == 'refs/heads/master' 
+          filter: "body.ref in ['refs/heads/master']"
       bindings:
         - name: app
       template:
