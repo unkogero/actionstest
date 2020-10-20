@@ -10,6 +10,7 @@ spec:
     template:
       name: app
 ---
+# mada
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
@@ -32,18 +33,3 @@ spec:
       template:
         name: app
 ---
-# mada
-apiVersion: triggers.tekton.dev/v1alpha1
-kind: EventListener
-metadata:
-  name: app
-spec:
-  triggers:
-    - name: github-listener
-      interceptors:
-      - cel:
-          filter: "body.ref in ['refs/heads/master']"
-      bindings:
-        - name: app
-      template:
-        name: app
